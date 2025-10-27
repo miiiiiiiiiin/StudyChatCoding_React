@@ -1,0 +1,96 @@
+/* 전체 레이아웃 */
+.app-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #e6f5e6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* 채팅창과 입력창 나란히 배치 */
+.main-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 50px;
+  width: 90%;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+
+/* 채팅창 영역 */
+.chat-container {
+  flex: 1.5; /* 비율로 넓이 조절 */
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  padding: 20px;
+  height: 70vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+/* 말풍선 공통 */
+.Chat-box.left,
+.Chat-box.right {
+  position: relative;
+  max-width: 60%;
+  padding: 12px 16px;
+  margin: 10px 0;
+  background-color: white;
+  border: 2px solid #4caf50;
+  border-radius: 12px;
+  word-wrap: break-word;
+  box-sizing: border-box;
+}
+
+/* 왼쪽 / 오른쪽 말풍선 */
+.Chat-box.left {
+  align-self: flex-start;
+}
+.Chat-box.right {
+  align-self: flex-end;
+}
+
+/* 입력창 영역 */
+.input-area {
+  flex: 1; /* chat-container 대비 1:3 비율 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+/* 인풋과 버튼 배치 */
+.input-area input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid #4caf50;
+  font-size: 17px;
+  outline: none;
+}
+.HintBtn{
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  color: white;
+  background-color: #4caf50;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+.HintBtn.active{
+  background-color: #626262;
+}
+.HintBtn:hover {
+  border: 2px solid #4caf50;
+  background-color: white;
+  color: black;
+}
