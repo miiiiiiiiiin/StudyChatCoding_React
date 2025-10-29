@@ -58,6 +58,17 @@
     font-size: 20px;
     align-items: center;
 }
+.M_input-area select{
+    width: 200px;
+    height: 70px;
+    margin: 30px;
+    padding: 10px;
+    border: 2px solid #4caf50;
+    background-color: white;
+    border-radius: 8px;
+    font-size: 20px;
+    align-items: center;
+}
 .EnterBtn{
     width: 130px;
     height: 90px;

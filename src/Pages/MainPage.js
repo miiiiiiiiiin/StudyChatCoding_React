@@ -2,16 +2,30 @@ import React, { useState, useEffect, useRef } from "react";
 import "./MainPage.css";
 import { useProblem } from "../ProblemContext";
 import CCodeEditor from './CCodeEditor';
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+
 
 export default function MainPage() {
+  const navigate = useNavigate();
   const { message, setMessage, response, setResponse } = useProblem();
-
+  const [sendCount, setSendCount] = useState(0);//정답 보낸 횟수
   const cleanText = (text) => {
     if (!text) return "";
     return text
       .replace(/\\n/g, '\n')
       .replace(/&nbsp;/g, ' ');
   };
+
+  // 정답/오답 판정 useEffect
+  useEffect(() => {
+    if (response?.reply?.includes("정답입니다")) {
+      navigate("/CorrectPage");
+      // 답장 횟수가 3번이상이고 답변에 틀렸습니다 키워드가 잇을 때
+    } else if (sendCount >= 3 && response?.reply?.includes("틀렸습니다")) {
+      navigate("/WrongPage");
+    }
+  }, [response, sendCount, navigate]);
+
 //채팅창 참조(채팅창화면 맨밑에 고정용)
   const chatEndRef = useRef(null);
 
@@ -58,6 +72,7 @@ int main() {
         text: cleanText(data?.reply || JSON.stringify(data, null, 2))
       };
       setChat(prevChat => [...prevChat, aiMessage]);
+      setSendCount(prev => prev + 1)// 답변 횟수 올리기
 
     } catch (err) {
       console.error("API 호출 실패:", err);
@@ -73,19 +88,19 @@ int main() {
     if (codeText.trim() === "") return;
     //내 메시지 먼저 화면에 표시
 
-  if(!isThinking){
-    setThinking(true);// true로 만들어서 버튼 눌러도 못들어오게 하기
-    const userMessage = codeText;
-    
-    //내가 보낸 코드를 화면에 표시
-    const userChat = { type: "right", text: userMessage };
-    setChat(prevChat => [...prevChat, userChat]);
-    
-    //서버에 보내고 응답 기다리기
-    await sendRequest(userMessage);
+    if(!isThinking){
+      setThinking(true);// true로 만들어서 버튼 눌러도 못들어오게 하기
+      const userMessage = codeText;
+      
+      //내가 보낸 코드를 화면에 표시
+      const userChat = { type: "right", text: userMessage };
+      setChat(prevChat => [...prevChat, userChat]);
+      
+      //서버에 보내고 응답 기다리기
+      await sendRequest(userMessage);
 
-    setThinking(false);// 풀어서 버튼 누를 수 잇게
-  }
+      setThinking(false);// 풀어서 버튼 누를 수 잇게
+    }
     
   };
 
@@ -114,6 +129,7 @@ int main() {
     setThinking(false);
   };
 
+
   return (
     <div className="main-wrapper">
       <div className="chat-container">
@@ -132,6 +148,7 @@ int main() {
         />
         <button className= {`HintBtn ${active ? "active" : " "}`} onClick={setHint}>힌트(남은 횟수 {b})</button>
         <button className= "HintBtn" onClick={handleSend}>답 전송</button>
+        
       </div>
     </div>
   );

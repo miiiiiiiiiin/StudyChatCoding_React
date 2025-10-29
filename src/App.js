@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import "./App.css";
+import CorrectPage from './Pages/Correct';
+import WrongPage from './Pages/Wrong';
 import MainPage from "./Pages/MainPage";
 import { ProblemProvider, useProblem } from "./ProblemContext";
 
@@ -52,6 +54,9 @@ function App() {
         <div className="nav">
           {/*<Link to="/mypage" className="subLink">마이페이지</Link>*/}
           <Link to="/records" className="subLink">기록</Link>
+          <Link to="/CorrectPage" className="subLink">정답입니다</Link>
+          <Link to="/WrongPage" className="subLink">틀렸습니다</Link>
+
         </div>
       </header>
 
@@ -64,6 +69,17 @@ function App() {
               <div className="mainText">
                 <h1>AI와 코딩 훈련하기</h1>
                 <div className="M_input-area">
+                  <label> 문제 난이도 선택: <select name="Level">
+                    <option value={1}> 레벨 1 </option>
+                    <option value={2}> 레벨 2 </option>
+                    <option value={3}> 레벨 3 </option>
+                    <option value={4}> 레벨 4 </option>
+                    <option value={5}> 레벨 5 </option>
+                    <option value={6}> 레벨 6 </option>
+                    <option value={7}> 레벨 7 </option>
+                    <option value={8}> 레벨 8 </option>
+                    <option value={9}> 레벨 9 </option>
+                  </select></label>
                   <input
                     type="text"
                     placeholder="문제를 입력하세요..."
@@ -82,6 +98,8 @@ function App() {
         {/* 다른 페이지 */}
         <Route path="/main" element={<MainPage />} />
         <Route path="/mypage" element={<div>마이페이지</div>} />
+        <Route path="/CorrectPage" element={<CorrectPage />} />
+        <Route path="/WrongPage" element={<WrongPage />} />
         <Route path="/records" element={<div>기록 페이지</div>} />
       </Routes>
     </div>
