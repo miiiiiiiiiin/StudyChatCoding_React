@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext } from "react";
 
-// Context 생성
+//api 서버 답변과 메세지 담는 전역변수만들기.Context 생성
 export const ProblemContext = createContext();
 
 // Provider 컴포넌트

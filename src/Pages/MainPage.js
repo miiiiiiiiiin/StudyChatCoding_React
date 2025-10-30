@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./MainPage.css";
 import { useProblem } from "../ProblemContext";
+import { useResult } from "../ResultContext";
 import CCodeEditor from './CCodeEditor';
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
@@ -8,7 +9,9 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 export default function MainPage() {
   const navigate = useNavigate();
   const { message, setMessage, response, setResponse } = useProblem();
-  const [sendCount, setSendCount] = useState(0);//정답 보낸 횟수
+  const { hint, correct, timer } = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
+  //const [sendCount, setSendCount] = useState(0);//정답 보낸 횟수
+
   const cleanText = (text) => {
     if (!text) return "";
     return text
@@ -21,10 +24,10 @@ export default function MainPage() {
     if (response?.reply?.includes("정답입니다")) {
       navigate("/CorrectPage");
       // 답장 횟수가 3번이상이고 답변에 틀렸습니다 키워드가 잇을 때
-    } else if (sendCount >= 3 && response?.reply?.includes("틀렸습니다")) {
+    } else if (correct.Correctnum >= 3 && response?.reply?.includes("틀렸습니다")) {
       navigate("/WrongPage");
     }
-  }, [response, sendCount, navigate]);
+  }, [response, correct.Correctnum, navigate]);
 
 //채팅창 참조(채팅창화면 맨밑에 고정용)
   const chatEndRef = useRef(null);
@@ -72,7 +75,7 @@ int main() {
         text: cleanText(data?.reply || JSON.stringify(data, null, 2))
       };
       setChat(prevChat => [...prevChat, aiMessage]);
-      setSendCount(prev => prev + 1)// 답변 횟수 올리기
+      //setSendCount(prev => prev + 1)
 
     } catch (err) {
       console.error("API 호출 실패:", err);
@@ -95,6 +98,7 @@ int main() {
       //내가 보낸 코드를 화면에 표시
       const userChat = { type: "right", text: userMessage };
       setChat(prevChat => [...prevChat, userChat]);
+      correct.setCorrectnum(prev => prev + 1);// 답변 횟수 올리기
       
       //서버에 보내고 응답 기다리기
       await sendRequest(userMessage);
@@ -106,12 +110,12 @@ int main() {
 
 
 ///////힌트버튼 눌럿을 때 함수
-  const [a, setA] = useState(1);
+  //const [a, setA] = useState(1);//힌트 호출 횟수
   const [b, setB] = useState(3);
   const [active, SetActive] = useState(false);//버튼 색 바꾸는용
 
   const setHint = async () => {
-    if (a > 3 || isThinking) return; // 3회 제한 & 중복 방지
+    if (hint.Hintnum > 3 || isThinking) return; // 3회 제한 & 중복 방지
 
     setThinking(true);
     setB(prevB => {
@@ -119,13 +123,13 @@ int main() {
       if (newB <= 0) SetActive(true);
       return newB;
     });
-
-    const userChat = { type: "right", text: `힌트 ${a}` };
+    const ShowHintNum = hint.Hintnum + 1;// 전역변수 값이 0이라 힌트 0으로 보내지니까 1을 올려서 보냄
+    const userChat = { type: "right", text: `힌트 ${ShowHintNum}` };
     setChat(prev => [...prev, userChat]);
-
-    await sendRequest(`힌트 ${a}`);
-
-    setA(prev => prev + 1);
+    
+    await sendRequest(`힌트 ${ShowHintNum}`);
+    hint.setHintnum(prev => prev + 1);//힌트 사용 횟수 올리기
+    //setA(prev => prev + 1);
     setThinking(false);
   };
 

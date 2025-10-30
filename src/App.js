@@ -5,14 +5,18 @@ import CorrectPage from './Pages/Correct';
 import WrongPage from './Pages/Wrong';
 import MainPage from "./Pages/MainPage";
 import { ProblemProvider, useProblem } from "./ProblemContext";
+import { ResultProvider } from "./ResultContext";
 
 function AppWrapper() {
   return (
     <ProblemProvider>
+      <ResultProvider>
       <App />
+      </ResultProvider>
     </ProblemProvider>
   );
 }
+
 
 function App() {
   const navigate = useNavigate();
@@ -87,7 +91,10 @@ function App() {
                     onChange={(e) => setMessage(e.target.value)}
                   />
                 </div>
-                <button className="EnterBtn" onClick={sendRequest}>
+                <button className="EnterBtn" 
+                onClick={async () => {
+                  await sendRequest();
+                }}>
                   문제 풀이
                 </button>
               </div>
