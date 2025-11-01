@@ -1,3 +1,12 @@
+/* Windows 95 스타일 - 한글 지원 폰트 */
+body {
+  font-family: "Nanum Gothic Coding", "D2Coding", "Malgun Gothic", "돋움", "Dotum", sans-serif;
+  background-color: #008080; /* 클래식 윈도우95 틸 배경 */
+  color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
 /* 헤더 */
 .header {
   width: 80%;
@@ -6,36 +15,161 @@
   align-items: center;
   margin-top: 30px;
   padding: 20px;
+  background: linear-gradient(180deg, #000080 0%, #1084d0 100%); /* 윈도우95 타이틀바 블루 */
+  border-radius: 0;
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 255, 255, 0.8),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+    2px 2px 0 rgba(0, 0, 0, 0.3);
+  border: 2px solid #dfdfdf;
 }
-.mainLink{
+
+/* 메인 로고 텍스트 */
+.mainLink {
   text-decoration: none;
-  margin-left: 40px;
-  font-weight: 2000;
+  font-weight: 700;
   font-size: 40px;
-  color: #203721; 
+  color: #ffffff;
+  letter-spacing: 0px;
+  transition: none;
+  padding-left: 20px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
-.subLink{
+.mainLink:hover {
+  color: #ffff00; /* 윈도우95 하이라이트 노란색 */
+}
+
+/* 서브 메뉴 */
+.subLink {
   text-decoration: none;
   margin-left: 20px;
-  font-weight: 500;
-  font-size: 20px;
-  color: #203721; 
+  font-weight: 600;
+  font-size: 18px;
+  color: #ffffff;
+  opacity: 1;
+  transition: none;
 }
-.header h1 {
-  font-size: 50px;
-  font-weight: bold;
+.subLink:hover {
+  color: #ffff00;
+  text-decoration: underline;
 }
 
-.nav span {
-  margin-left: 20px;
+/* 메인 내용 */
+.mainText {
+  text-align: center;
+  font-size: 28px;
+  margin-top: 40px;
+  font-weight: 700;
+  color: #000080; /* 윈도우95 블루 */
+}
+
+/* 메인 컨테이너 */
+.Maincontainer {
+  margin-top: 45px;
+  width: 65%;
+  background-color: #c0c0c0; /* 윈도우95 회색 */
+  border-radius: 0;
+  padding: 30px;
+  height: 60vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 
+    inset -1px -1px 0 #ffffff,
+    inset 1px 1px 0 #808080,
+    inset -2px -2px 0 #dfdfdf,
+    inset 2px 2px 0 #000000;
+  border: none;
+}
+
+/* 스크롤바 스타일링 - 윈도우95 스타일 */
+.Maincontainer::-webkit-scrollbar {
+  width: 16px;
+  background: #c0c0c0;
+}
+.Maincontainer::-webkit-scrollbar-track {
+  background: #c0c0c0;
+  box-shadow: inset 1px 1px 0 #808080;
+}
+.Maincontainer::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  box-shadow: 
+    inset -1px -1px 0 #808080,
+    inset 1px 1px 0 #dfdfdf;
+}
+.Maincontainer::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+.Maincontainer::-webkit-scrollbar-button {
+  background: #c0c0c0;
+  height: 16px;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+}
+
+/* 입력창 */
+.M_input-area input,
+.M_input-area select {
+  width: 500px;
+  height: 70px;
+  margin: 20px;
+  padding: 12px 20px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 0;
+  font-size: 18px;
+  font-family: "Nanum Gothic Coding", "D2Coding", "Malgun Gothic", "돋움", sans-serif;
+  transition: none;
+  box-shadow: inset 1px 1px 0 #000000;
+}
+.M_input-area input:focus,
+.M_input-area select:focus {
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+  outline: 1px dotted #000000;
+  outline-offset: -4px;
+}
+
+.M_input-area input::placeholder {
+  color: #808080;
+}
+
+.M_input-area select {
   cursor: pointer;
-  font-weight: 500;
+  appearance: none;
+  padding-right: 30px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23000000" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M4 6l4 4 4-4z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
 }
 
-.mainText{
-    text-align: center;
-    font-size: 30px;
+/* 버튼 - 윈도우95 클래식 버튼 */
+.EnterBtn {
+  width: 330px;
+  height: 90px;
+  margin-top: 25px;
+  color: #000000;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  background-color: #c0c0c0;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: none;
+  box-shadow: 
+    inset -1px -1px 0 #808080,
+    inset 1px 1px 0 #dfdfdf,
+    inset -2px -2px 0 #000000,
+    inset 2px 2px 0 #ffffff;
+  font-family: "Nanum Gothic Coding", "D2Coding", "Malgun Gothic", "돋움", sans-serif;
 }
+<<<<<<< Updated upstream
 .Maincontainer{
     margin-top: 45px;
     width: 60%;
@@ -71,8 +205,32 @@
     transition: all 0.2s ease;
 }
 
+=======
+>>>>>>> Stashed changes
 .EnterBtn:hover {
-  background-color: white;
-  border: 2px solid #4caf50;
-  color: #4caf50;
+  background-color: #b0b0b0;
+}
+.EnterBtn:active {
+  border-color: #000000 #ffffff #ffffff #000000;
+  box-shadow: 
+    inset 1px 1px 0 #808080,
+    inset -1px -1px 0 #dfdfdf,
+    inset 2px 2px 0 #000000;
+  padding-top: 4px;
+  padding-left: 4px;
+}
+
+/* 반응형 개선 */
+@media (max-width: 900px) {
+  .Maincontainer {
+    width: 90%;
+    height: auto;
+  }
+  .M_input-area input,
+  .M_input-area select {
+    width: 100%;
+  }
+  .EnterBtn {
+    width: 100%;
+  }
 }

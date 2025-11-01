@@ -12,6 +12,20 @@ export default function MainPage() {
       .replace(/\\n/g, '\n')
       .replace(/&nbsp;/g, ' ');
   };
+<<<<<<< Updated upstream
+=======
+
+  // 정답/오답 판정 useEffect
+  useEffect(() => {
+    if (response?.reply?.includes("정답입니다")) {
+      navigate("/CorrectPage", { replace: true });
+      // 답장 횟수가 3번이상이고 답변에 틀렸습니다 키워드가 잇을 때
+    } else if (correct.Correctnum >= 3 && response?.reply?.includes("틀렸습니다")) {
+      navigate("/WrongPage", { replace: true });
+    }
+  }, [response, correct.Correctnum, navigate]);
+
+>>>>>>> Stashed changes
 //채팅창 참조(채팅창화면 맨밑에 고정용)
   const chatEndRef = useRef(null);
 
@@ -126,6 +140,7 @@ int main() {
       </div>
 
       <div className="input-area">
+        <p>아래에 답을 입력해보세요! </p>
         <CCodeEditor
           value={codeText}
           onChange={handleChange}

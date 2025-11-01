@@ -42,16 +42,22 @@ function App() {
   };
 
 
-
   return (
     <div className="app-container">
       <header className="header">
-        <Link to="/" className="mainLink">
-          코딩훈련 
+        <Link to="/" replace className="mainLink">
+          코드메이트 
         </Link>
         <div className="nav">
           {/*<Link to="/mypage" className="subLink">마이페이지</Link>*/}
+<<<<<<< Updated upstream
           <Link to="/records" className="subLink">기록</Link>
+=======
+          <Link to="/records" replace className="subLink">기록</Link>
+          <Link to="/CorrectPage" className="subLink">정답입니다</Link>
+          <Link to="/WrongPage" className="subLink">틀렸습니다</Link>
+
+>>>>>>> Stashed changes
         </div>
       </header>
 
