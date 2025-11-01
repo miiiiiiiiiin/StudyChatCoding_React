@@ -5,7 +5,7 @@ import { useResult } from "../ResultContext";
 import CCodeEditor from './CCodeEditor';
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
-
+///////메인 채팅창 페이지
 export default function MainPage() {
   const navigate = useNavigate();
   const { message, setMessage, response, setResponse } = useProblem();
@@ -146,12 +146,16 @@ int main() {
       </div>
 
       <div className="input-area">
+        <p>아래에 답을 입력해보세요! </p>
         <CCodeEditor
           value={codeText}
           onChange={handleChange}
         />
-        <button className= {`HintBtn ${active ? "active" : " "}`} onClick={setHint}>힌트(남은 횟수 {b})</button>
-        <button className= "HintBtn" onClick={handleSend}>답 전송</button>
+        <div className="SendBtn">
+          <button className= {`HintBtn ${active ? "active" : " "}`} onClick={setHint}>힌트(남은 횟수 {b})</button>
+          <button className= "HintBtn" onClick={handleSend}>답 전송</button>
+        </div>
+        
         
       </div>
     </div>

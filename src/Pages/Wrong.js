@@ -4,8 +4,8 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import "./MainPage.css";
 import { useProblem } from "../ProblemContext";
 import { useResult } from "../ResultContext";
-
-export default function Correct() {
+/////////////////////////////// 틀림 페이지 //////////////
+export default function Wrong() {
 const navigate = useNavigate();
   const { message, setMessage, response, setResponse } = useProblem();// 답변, 문제
   const { hint, correct, timer, level, resetAll } = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수

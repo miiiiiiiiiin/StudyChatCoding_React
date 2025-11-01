@@ -5,7 +5,7 @@ import "./MainPage.css";
 import { useProblem } from "../ProblemContext";
 import { useResult } from "../ResultContext";
 
-
+////////정답 페이지
 export default function Correct() {
   const navigate = useNavigate();
   const { message, setMessage, response, setResponse } = useProblem();// 답변, 문제
