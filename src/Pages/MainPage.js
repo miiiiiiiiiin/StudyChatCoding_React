@@ -37,23 +37,30 @@ export default function MainPage() {
     { type: "left", text: cleanText(response?.reply || JSON.stringify(response, null, 2)) }
   ]);
 
-  // C 코드 입력 (초기값 추가)
-  const [codeText, setCodeText] = useState(`#include <stdio.h>
+////// C 코드 인풋창 초기값 입력 
+  // 초기 C 코드 템플릿
+  const initialCode = `#include <stdio.h>
 
 int main() {
     
     return 0;
-}`);
+}`;
+
+  const [codeText, setCodeText] = useState(initialCode);
+  // 초기화 함수
+  const handleReset = () => {
+    setCodeText(initialCode);
+  };
 
 //메시지가 바뀔 때마다 스크롤 맨 아래로 이동
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [Chat]); 
 
-  //인풋텍스트 글자띄우기
+/////인풋텍스트 글자띄우기
   const handleChange = (e) => setCodeText(e.target.value);
 
-  // 서버에 답장 보내기
+//// 서버에 답장 보내기
   const sendRequest = async (userMessage) => {
     try {
       const res = await fetch("http://localhost:8080/api/chat", {
@@ -150,6 +157,8 @@ int main() {
         <CCodeEditor
           value={codeText}
           onChange={handleChange}
+          onReset={handleReset}
+
         />
         <div className="SendBtn">
           <button className= {`HintBtn ${active ? "active" : " "}`} onClick={setHint}>힌트(남은 횟수 {b})</button>

@@ -4,6 +4,7 @@ import "./App.css";
 import CorrectPage from './Pages/Correct';
 import WrongPage from './Pages/Wrong';
 import MainPage from "./Pages/MainPage";
+import RecordPage from "./Pages/RecordPage";
 import { ProblemProvider, useProblem } from "./ProblemContext";
 import { ResultProvider, useResult } from "./ResultContext";
 import menuIcon from './Icon/menu.png'
@@ -18,7 +19,7 @@ function AppWrapper() {
   );
 }
 
-
+/////////////// 메인화면 ///// /////////
 function App() {
   const navigate = useNavigate();
   const { message, setMessage, setResponse } = useProblem(); // Context 값 사용
@@ -52,7 +53,7 @@ function App() {
     }
   };
 
-
+  
 
   return (
     <div className="app-container">
@@ -77,16 +78,20 @@ function App() {
       {/* 사이드바 */}
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-item">
-          <Link to="/records" className="subLink">코드톡 소개</Link>
+          <Link to="/records" className="subLink" 
+          onClick={toggleSidebar} >코드톡 소개</Link>
         </div>
         <div className="sidebar-item">
-          <Link to="/records" className="subLink">기록</Link>
+          <Link to="/RecordPage" className="subLink"
+          onClick={toggleSidebar}>기록</Link>
         </div>
         <div className="sidebar-item">
-          <Link to="/CorrectPage" className="subLink">정답입니다</Link>
+          <Link to="/CorrectPage" className="subLink"
+          onClick={toggleSidebar}>정답입니다</Link>
         </div>
         <div className="sidebar-item">
-          <Link to="/WrongPage" className="subLink">틀렸습니다</Link>
+          <Link to="/WrongPage" className="subLink"
+          onClick={toggleSidebar}>틀렸습니다</Link>
         </div>
       </div>
 
@@ -129,7 +134,7 @@ function App() {
         <Route path="/mypage" element={<div>마이페이지</div>} />
         <Route path="/CorrectPage" element={<CorrectPage />} />
         <Route path="/WrongPage" element={<WrongPage />} />
-        <Route path="/records" element={<div>기록 페이지</div>} />
+        <Route path="/RecordPage" element={<RecordPage />} />
       </Routes>
     </div>
   );

@@ -209,7 +209,7 @@
   background-color: #f8f9ff;
   box-shadow: 2px 0 5px rgba(0,0,0,0.2);
   transition: left 0.3s ease;
-  padding-top: 90px; /* 헤더랑 안 겹치게 */
+  padding-top: 95px; /* 헤더랑 안 겹치게 */
   z-index: 999;
 }
 
