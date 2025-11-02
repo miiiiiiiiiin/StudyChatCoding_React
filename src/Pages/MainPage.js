@@ -9,46 +9,57 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 export default function MainPage() {
   const navigate = useNavigate();
   const { message, setMessage, response, setResponse } = useProblem();
-  const { hint, correct, timer } = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
-  //const [sendCount, setSendCount] = useState(0);//정답 보낸 횟수
+  const { hint, correct, timer } = useResult();// 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
+  const [isLoading, setIsLoading] = useState(false);
+  const [isNoticeOpen, setIsNoticeOpen] = useState(true); // 공지 열림/닫힘 상태
 
   const cleanText = (text) => {
     if (!text) return "";
     return text
-      .replace(/\\n/g, '\n')
+      .replace(/\\n/g, '\n\n')
       .replace(/&nbsp;/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&le;/g, '≤')
+      .replace(/&ge;/g, '≥')
       .replace(/"/g, '');
   };
 
+  // 맨 처음 문제만 저장 (한 번만 설정)
+  const [problemText, setProblemText] = useState("");
+
+  // 컴포넌트 마운트 시 한 번만 설정
+  useEffect(() => {
+    if (!problemText) {
+      setProblemText(cleanText(response?.reply || JSON.stringify(response, null, 2)));
+    }
+  }, []); // 빈 배열 = 처음 한 번만 실행
   // 정답/오답 판정 useEffect
   useEffect(() => {
   // response가 문자열인 경우
-  if (typeof response === 'string' && response.includes("정답입니다.")) {
-    navigate("/CorrectPage");
-  } else if (correct.Correctnum >= 3 && typeof response === 'string' && response.includes("틀렸습니다.")) {
-    navigate("/WrongPage");
-  }
-  
   // 또는 response가 객체인 경우
-  if (response?.reply?.includes("정답입니다.")) {
-    navigate("/CorrectPage");
-  } else if (correct.Correctnum >= 3 && response?.reply?.includes("틀렸습니다.")) {
-    navigate("/WrongPage");
-  }
-}, [response, correct.Correctnum, navigate]);
-
 //채팅창 참조(채팅창화면 맨밑에 고정용)
+    if (typeof response === 'string' && response.includes("정답입니다.")) {
+      navigate("/CorrectPage");
+    } else if (correct.Correctnum >= 3 && typeof response === 'string' && response.includes("틀렸습니다.")) {
+      navigate("/WrongPage");
+    }
+    
+    if (response?.reply?.includes("정답입니다.")) {
+      navigate("/CorrectPage");
+    } else if (correct.Correctnum >= 3 && response?.reply?.includes("틀렸습니다.")) {
+      navigate("/WrongPage");
+    }
+  }, [response, correct.Correctnum, navigate]);
+
   const chatEndRef = useRef(null);
 
 //말풍선 변수 맨 처음 기본값: 받아온 문제(초기 response값)
-  const [Chat, setChat] = useState([
-    { type: "left", text: cleanText(response?.reply || JSON.stringify(response, null, 2)) }
-  ]);
 
 ////// C/자바코드 인풋창 초기값 입력 
   // 언어 상태 추가
-  const [language, setLanguage] = useState('c'); // 'c' 또는 'java'
   // 초기 C 코드 템플릿
+  const [language, setLanguage] = useState('c');
   const initialCCode = `#include <stdio.h>
 
 int main() {
@@ -57,13 +68,13 @@ int main() {
 }`;
 
 // 초기 Java 코드 템플릿
-const initialJavaCode = `public class Main {
+  const initialJavaCode = `public class Main {
     public static void main(String[] args) {
         
     }
 }`;
   const [codeText, setCodeText] = useState(initialCCode);
-  // 초기화 함수
+  
   const handleReset = () => {
     setCodeText(language === 'c' ? initialCCode : initialJavaCode);
   };
@@ -79,13 +90,14 @@ const initialJavaCode = `public class Main {
 //메시지가 바뀔 때마다 스크롤 맨 아래로 이동
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [Chat]); 
+  }, [Chat, isLoading]);
 
 /////인풋텍스트 글자띄우기
   const handleChange = (e) => setCodeText(e.target.value);
 
 //// 서버에 답장 보내기(힌트용)
   const sendRequest = async (userMessage) => {
+    setIsLoading(true);
     try {
       const res = await fetch("http://localhost:8080/api/chat", {
         method: "POST",
@@ -94,11 +106,11 @@ const initialJavaCode = `public class Main {
         },
         body: JSON.stringify({
           username: "testuser",
-          message: userMessage, // 매개변수로 받은 메시지 사용
+          message: userMessage,
         }),
       });
       const data = await res.json();
-      setResponse(data);//Context response값 업데이트
+      setResponse(data);
 
        // AI 응답을 채팅에 추가
       const aiMessage = { 
@@ -106,18 +118,19 @@ const initialJavaCode = `public class Main {
         text: cleanText(data?.reply || JSON.stringify(data, null, 2))
       };
       setChat(prevChat => [...prevChat, aiMessage]);
-      //setSendCount(prev => prev + 1)
 
     } catch (err) {
       console.error("API 호출 실패:", err);
       const errorMessage = { type: "left", text: "오류가 발생했습니다." };
       setChat(prevChat => [...prevChat, errorMessage]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-
 ////////////   정답/틀림 답변 받는 함수   ////////////
   const RequestDiscrimination = async (userMessage, lang) => {
+    setIsLoading(true);
     try {
       const res = await fetch("http://localhost:8080/api/answer/evaluate", {
         method: "POST",
@@ -146,24 +159,28 @@ const initialJavaCode = `public class Main {
       console.error("API 호출 실패:", err);
       const errorMessage = { type: "left", text: "오류가 발생했습니다." };
       setChat(prevChat => [...prevChat, errorMessage]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
 //답장 오기 전까지 버튼 누르지 못하게 하는 bool변수
   const [isThinking, setThinking] = useState(false);
 // 화면에 대화 출력
+  
   const handleSend = async () => {
     if (codeText.trim() === "") return;
     //내 메시지 먼저 화면에 표시
 
     if(!isThinking){
-      setThinking(true);// true로 만들어서 버튼 눌러도 못들어오게 하기
+      setThinking(true);
       const userMessage = codeText;
       
       //내가 보낸 코드를 화면에 표시
       const userChat = { type: "right", text: userMessage };
       setChat(prevChat => [...prevChat, userChat]);
       correct.setCorrectnum(prev => prev + 1);// 답변 횟수 올리기
+      
       if(language == 'c'){
         await RequestDiscrimination(userMessage, "C");
       }else{
@@ -171,15 +188,11 @@ const initialJavaCode = `public class Main {
       }
       //서버에 보내고 응답 기다리기
       
-
       setThinking(false);// 풀어서 버튼 누를 수 잇게
     }
-    
   };
 
-
 ///////힌트버튼 눌럿을 때 함수
-  //const [a, setA] = useState(1);//힌트 호출 횟수
   const [b, setB] = useState(3);
   const [active, SetActive] = useState(false);//버튼 색 바꾸는용
 
@@ -198,20 +211,52 @@ const initialJavaCode = `public class Main {
     
     await sendRequest(`힌트 ${ShowHintNum}`);
     hint.setHintnum(prev => prev + 1);//힌트 사용 횟수 올리기
-    //setA(prev => prev + 1);
     setThinking(false);
   };
-
 
   return (
     <div className="main-wrapper">
       <div className="chat-container">
-        {Chat.map((msg, idx) => (
-          <div key={idx} className={`Chat-box ${msg.type}`}>
-            <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{msg.text}</p>
+        {/* 상단 고정 공지 */}
+        <div className="notice-container">
+          <div 
+            className="notice-header" 
+            onClick={() => setIsNoticeOpen(!isNoticeOpen)}
+          >
+            <div className="notice-title">
+              <span className="notice-icon">📌</span>
+              <span>문제</span>
+            </div>
+            <span className={`notice-arrow ${isNoticeOpen ? 'open' : ''}`}>▼</span>
           </div>
-        ))}
-        <div ref={chatEndRef} />
+          
+          {isNoticeOpen && (
+            <div className="notice-content">
+              <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{problemText}</p>
+            </div>
+          )}
+        </div>
+
+        {/* 일반 채팅 영역 */}
+        <div className="chat-messages">
+          {Chat.map((msg, idx) => (
+            <div key={idx} className={`Chat-box ${msg.type}`}>
+              <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{msg.text}</p>
+            </div>
+          ))}
+          
+          {isLoading && (
+            <div className="Chat-box left loading-box">
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          )}
+          
+          <div ref={chatEndRef} />
+        </div>
       </div>
 
       <div className="input-area">
@@ -222,14 +267,11 @@ const initialJavaCode = `public class Main {
           onReset={handleReset}
           language={language}
           onLanguageChange={handleLanguageChange}
-
         />
         <div className="SendBtn">
-          <button className= {`HintBtn ${active ? "active" : " "}`} onClick={setHint}>힌트(남은 횟수 {b})</button>
-          <button className= "HintBtn" onClick={handleSend}>답 전송</button>
+          <button className={`HintBtn ${active ? "active" : ""}`} onClick={setHint}>힌트(남은 횟수 {b})</button>
+          <button className="HintBtn" onClick={handleSend}>답 전송</button>
         </div>
-        
-        
       </div>
     </div>
   );
