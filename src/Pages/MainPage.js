@@ -54,7 +54,8 @@ export default function MainPage() {
 
   const chatEndRef = useRef(null);
 
-//말풍선 변수 맨 처음 기본값: 받아온 문제(초기 response값)
+  // 말풍선 변수 (첫 문제는 제외하고 시작)
+  const [Chat, setChat] = useState([]);
 
 ////// C/자바코드 인풋창 초기값 입력 
   // 언어 상태 추가
