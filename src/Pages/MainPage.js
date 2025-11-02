@@ -37,19 +37,35 @@ export default function MainPage() {
     { type: "left", text: cleanText(response?.reply || JSON.stringify(response, null, 2)) }
   ]);
 
-////// C 코드 인풋창 초기값 입력 
+////// C/자바코드 인풋창 초기값 입력 
+  // 언어 상태 추가
+  const [language, setLanguage] = useState('c'); // 'c' 또는 'java'
   // 초기 C 코드 템플릿
-  const initialCode = `#include <stdio.h>
+  const initialCCode = `#include <stdio.h>
 
 int main() {
     
     return 0;
 }`;
 
-  const [codeText, setCodeText] = useState(initialCode);
+// 초기 Java 코드 템플릿
+const initialJavaCode = `public class Main {
+    public static void main(String[] args) {
+        
+    }
+}`;
+  const [codeText, setCodeText] = useState(initialCCode);
   // 초기화 함수
   const handleReset = () => {
-    setCodeText(initialCode);
+    setCodeText(language === 'c' ? initialCCode : initialJavaCode);
+  };
+
+  // 언어 변경 핸들러 추가
+  const handleLanguageChange = (e) => {
+    const newLang = e.target.value;
+    setLanguage(newLang);
+    // 언어 변경 시 해당 언어의 초기 템플릿으로 설정
+    setCodeText(newLang === 'c' ? initialCCode : initialJavaCode);
   };
 
 //메시지가 바뀔 때마다 스크롤 맨 아래로 이동
@@ -69,11 +85,45 @@ int main() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "username",
+          username: "testuser",
           message: userMessage, // 매개변수로 받은 메시지 사용
         }),
       });
       const data = await res.json();
+      setResponse(data);//Context response값 업데이트
+
+       // AI 응답을 채팅에 추가
+      const aiMessage = { 
+        type: "left", 
+        text: cleanText(data?.reply || JSON.stringify(data, null, 2))
+      };
+      setChat(prevChat => [...prevChat, aiMessage]);
+      //setSendCount(prev => prev + 1)
+
+    } catch (err) {
+      console.error("API 호출 실패:", err);
+      const errorMessage = { type: "left", text: "오류가 발생했습니다." };
+      setChat(prevChat => [...prevChat, errorMessage]);
+    }
+  };
+
+
+////////////   정답/틀림 답변 받는 함수   ////////////
+  const RequestDiscrimination = async (userMessage) => {
+    try {
+      const res = await fetch("http://localhost:8080/api/answer/evaluate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "testuser",
+          problemId: 1,
+          code: userMessage, // 매개변수로 받은 메시지 사용
+          language: "C",
+        }),
+      });
+      const data = await res.text();
       setResponse(data);//Context response값 업데이트
 
        // AI 응답을 채팅에 추가
@@ -108,7 +158,7 @@ int main() {
       correct.setCorrectnum(prev => prev + 1);// 답변 횟수 올리기
       
       //서버에 보내고 응답 기다리기
-      await sendRequest(userMessage);
+      await RequestDiscrimination(userMessage);
 
       setThinking(false);// 풀어서 버튼 누를 수 잇게
     }
@@ -158,6 +208,8 @@ int main() {
           value={codeText}
           onChange={handleChange}
           onReset={handleReset}
+          language={language}
+          onLanguageChange={handleLanguageChange}
 
         />
         <div className="SendBtn">

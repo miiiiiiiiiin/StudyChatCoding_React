@@ -39,15 +39,17 @@ function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "username",
+          username: "testuser",
           message: message,
         }),
       });
+      //await fetch(`http://localhost:8080/api/problems/fetch?url=${encodeURIComponent(message)}`);
 
       const data = await res.json();
-
       setResponse(data); // Context에 저장
-      navigate("/main"); // 결과 페이지로 이동
+      
+      //navigate("/main"); // 결과 페이지로 이동
+      setTimeout(() => navigate("/main"), 50);
     } catch (err) {
       console.error("API 호출 실패:", err);
     }
