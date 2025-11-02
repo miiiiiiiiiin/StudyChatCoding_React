@@ -16,18 +16,26 @@ export default function MainPage() {
     if (!text) return "";
     return text
       .replace(/\\n/g, '\n')
-      .replace(/&nbsp;/g, ' ');
+      .replace(/&nbsp;/g, ' ')
+      .replace(/"/g, '');
   };
 
   // 정답/오답 판정 useEffect
   useEffect(() => {
-    if (response?.reply?.includes("정답입니다")) {
-      navigate("/CorrectPage");
-      // 답장 횟수가 3번이상이고 답변에 틀렸습니다 키워드가 잇을 때
-    } else if (correct.Correctnum >= 3 && response?.reply?.includes("틀렸습니다")) {
-      navigate("/WrongPage");
-    }
-  }, [response, correct.Correctnum, navigate]);
+  // response가 문자열인 경우
+  if (typeof response === 'string' && response.includes("정답입니다.")) {
+    navigate("/CorrectPage");
+  } else if (correct.Correctnum >= 3 && typeof response === 'string' && response.includes("틀렸습니다.")) {
+    navigate("/WrongPage");
+  }
+  
+  // 또는 response가 객체인 경우
+  if (response?.reply?.includes("정답입니다.")) {
+    navigate("/CorrectPage");
+  } else if (correct.Correctnum >= 3 && response?.reply?.includes("틀렸습니다.")) {
+    navigate("/WrongPage");
+  }
+}, [response, correct.Correctnum, navigate]);
 
 //채팅창 참조(채팅창화면 맨밑에 고정용)
   const chatEndRef = useRef(null);
@@ -76,7 +84,7 @@ const initialJavaCode = `public class Main {
 /////인풋텍스트 글자띄우기
   const handleChange = (e) => setCodeText(e.target.value);
 
-//// 서버에 답장 보내기
+//// 서버에 답장 보내기(힌트용)
   const sendRequest = async (userMessage) => {
     try {
       const res = await fetch("http://localhost:8080/api/chat", {
@@ -109,7 +117,7 @@ const initialJavaCode = `public class Main {
 
 
 ////////////   정답/틀림 답변 받는 함수   ////////////
-  const RequestDiscrimination = async (userMessage) => {
+  const RequestDiscrimination = async (userMessage, lang) => {
     try {
       const res = await fetch("http://localhost:8080/api/answer/evaluate", {
         method: "POST",
@@ -120,7 +128,7 @@ const initialJavaCode = `public class Main {
           username: "testuser",
           problemId: 1,
           code: userMessage, // 매개변수로 받은 메시지 사용
-          language: "C",
+          language: lang,
         }),
       });
       const data = await res.text();
@@ -156,9 +164,13 @@ const initialJavaCode = `public class Main {
       const userChat = { type: "right", text: userMessage };
       setChat(prevChat => [...prevChat, userChat]);
       correct.setCorrectnum(prev => prev + 1);// 답변 횟수 올리기
-      
+      if(language == 'c'){
+        await RequestDiscrimination(userMessage, "C");
+      }else{
+        await RequestDiscrimination(userMessage, "Java");
+      }
       //서버에 보내고 응답 기다리기
-      await RequestDiscrimination(userMessage);
+      
 
       setThinking(false);// 풀어서 버튼 누를 수 잇게
     }
