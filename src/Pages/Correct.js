@@ -53,7 +53,7 @@ export default function Correct() {
             <div className="mainText"> 
               <h1>정답입니다!</h1> 
               <p> {correct.Correctnum}번 만에 정답을 맞췄습니다! </p>
-              <p> 힌트 사용 횟수: {hint.Hintnum} &nbsp;&nbsp;&nbsp;&nbsp;  걸린 시간: {timer.몇초}초 </p>
+              <p> 힌트 사용 횟수: {hint.Hintnum} &nbsp;&nbsp;&nbsp;&nbsp;  걸린 시간: {몇초}초 </p>
     
               <button className="EnterBtn" onClick={NextLevel}> 다음 레벨로 (Level {다음레벨})</button>
 
