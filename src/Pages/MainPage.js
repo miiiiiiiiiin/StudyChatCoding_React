@@ -55,8 +55,12 @@ export default function MainPage() {
   const chatEndRef = useRef(null);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   // 말풍선 변수 (첫 문제는 제외하고 시작)
   const [Chat, setChat] = useState([]);
+=======
+//말풍선 변수 맨 처음 기본값: 받아온 문제(초기 response값)
+>>>>>>> parent of 6e88666 (수정)
 =======
 //말풍선 변수 맨 처음 기본값: 받아온 문제(초기 response값)
 >>>>>>> parent of 6e88666 (수정)
