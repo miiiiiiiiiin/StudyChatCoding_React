@@ -9,9 +9,7 @@ export default function Wrong() {
 const navigate = useNavigate();
   const { message, setMessage, response, setResponse } = useProblem();// 답변, 문제
   const { hint, correct, timer, level, resetAll, selectedLevel, setSelectedLevel} = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
-  
-  //const [Hintnum, setHintnum] = useState(0);//힌트사용횟수
-  //const [Correctnum, setCorrectnum] = useState(0);//정답 몇번만에 맞췃는지
+
   
   const username = "testuser";
   // 레벨 기반 문제 출제 (세션ID를 응답 헤더로 수신)
@@ -68,7 +66,7 @@ const navigate = useNavigate();
       setMin(Math.trunc(timer.몇초 / 60));
       setSec(timer.몇초%60);
     }else setSec(timer.몇초);
-  })
+  }, [timer.몇초]);
   
   return (
         <div className="Maincontainer">

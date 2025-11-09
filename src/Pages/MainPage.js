@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 export default function MainPage() {
   const navigate = useNavigate();
   const { response, setResponse } = useProblem();
-  const { hint, correct, timer} = useResult();
+  const { hint, correct, timer, level, resetAll, selectedLevel, setSelectedLevel} = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
+  
 
   const [isLoading, setIsLoading] = useState(false);
   const [isNoticeOpen, setIsNoticeOpen] = useState(true);
@@ -77,6 +78,7 @@ export default function MainPage() {
     };
 
     if (typeof response === 'string' && response.includes("정답입니다.")) {
+      if(selectedLevel < 68) setSelectedLevel(prev => prev + 1); // 레벨 증가(다음문제용)    
       handleNavigateWithTimer("/CorrectPage");
     } else if (correct.Correctnum >= 3 && typeof response === 'string' && response.includes("틀렸습니다.")) {
       handleNavigateWithTimer("/WrongPage");

@@ -122,7 +122,8 @@ function App() {
           element={
             <main className="Maincontainer">
               <div className="mainText">
-                <h1>AI와 코딩 문제를 풀어보세요!</h1>
+                <h1>AI와 함께하는 인터랙티브 코딩 챌린지</h1>
+                <p> 대화로 배우는 코딩, AI와 함께 성장하세요</p>
                 <div className="M_input-area">
                   <label>
                     문제 난이도 선택:&nbsp;
