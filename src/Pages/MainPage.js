@@ -84,11 +84,14 @@ export default function MainPage() {
 
   }, [response, correct.Correctnum, navigate]);
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [Chat, isLoading]);
+  const chatEndRef = useRef(null);
 
-  // 코드 입력/언어
+  // 말풍선 변수 (첫 문제는 제외하고 시작)
+  const [Chat, setChat] = useState([]);
+
+////// C/자바코드 인풋창 초기값 입력 
+  // 언어 상태 추가
+  // 초기 C 코드 템플릿
   const [language, setLanguage] = useState('c');
 
   const initialCCode = `#include <stdio.h>
