@@ -226,7 +226,7 @@ export default function CodeEditor({ value, onChange, onReset, language, onLangu
       {/* Monaco Editor */}
       <div style={styles.editorWrapper}>
         <Editor
-          height="500px"
+          height="300px"
           width="500px"
           language={getMonacoLanguage()}
           value={value}

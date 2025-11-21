@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import "./App.css";
 import CorrectPage from './Pages/Correct';
@@ -6,6 +6,7 @@ import WrongPage from './Pages/Wrong';
 import MainPage from "./Pages/MainPage";
 import RecordPage from "./Pages/RecordPage";
 import LoginPage from "./Pages/LoginPage";
+import PresentPage from "./Pages/CodeTalkPresent.js"
 import { ProblemProvider, useProblem } from "./ProblemContext";
 import { ResultProvider, useResult } from "./ResultContext";
 import { UserProvider, useUser } from "./UserContext.js";
@@ -131,7 +132,7 @@ function App() {
       {/* 사이드바 */}
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-item">
-          <Link to="/records" className="subLink" onClick={toggleSidebar}>코드톡 소개</Link>
+          <Link to="/PresentPage" className="subLink" onClick={toggleSidebar}>코드톡 소개</Link>
         </div>
         <div className="sidebar-item">
           <Link to="/RecordPage" className="subLink" onClick={toggleSidebar}>기록</Link>
@@ -181,6 +182,7 @@ function App() {
         <Route path="/WrongPage" element={<WrongPage />} />
         <Route path="/RecordPage" element={<RecordPage />} />
         <Route path="/LoginPage" element={<LoginPage />} />
+        <Route path="/PresentPage" element={<PresentPage />}/>
       </Routes>
 
       {/* Toast 메시지 컨테이너 */}

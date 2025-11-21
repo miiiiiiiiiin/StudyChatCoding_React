@@ -139,7 +139,7 @@
 
 /* 메인 컨테이너 - 전체 화면 활용 */
 .Maincontainer {
-  min-height: 100vh;
+  min-height: 70vh;
   width: 100%;
   background: linear-gradient(180deg, 
     #f8f9ff 0%, 
