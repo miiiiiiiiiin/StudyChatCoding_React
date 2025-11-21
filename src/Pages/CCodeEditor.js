@@ -1,72 +1,9 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
+import Editor from '@monaco-editor/react';
 
-/////////// C/Java 코드 개발 인풋 에디터 ///////////
+/////////// C/Java 코드 개발 인풋 에디터 (Monaco) ///////////
 export default function CodeEditor({ value, onChange, onReset, language, onLanguageChange }) {
-  const handleKeyDown = (e) => {
-    // Tab 키 처리
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const start = e.target.selectionStart;
-      const end = e.target.selectionEnd;
-      const newCode = value.substring(0, start) + '    ' + value.substring(end);
-      onChange({ target: { value: newCode } });
-      
-      setTimeout(() => {
-        e.target.selectionStart = e.target.selectionEnd = start + 4;
-      }, 0);
-      return;
-    }
-
-    // Enter 키 처리 (자동 들여쓰기)
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const start = e.target.selectionStart;
-      const lines = value.substring(0, start).split('\n');
-      const currentLine = lines[lines.length - 1];
-      
-      // 현재 줄의 들여쓰기 계산
-      const indent = currentLine.match(/^\s*/)[0];
-      
-      // { 로 끝나는 경우 들여쓰기 추가
-      const needExtraIndent = currentLine.trim().endsWith('{');
-      const newIndent = needExtraIndent ? indent + '    ' : indent;
-      
-      const newCode = value.substring(0, start) + '\n' + newIndent + value.substring(start);
-      onChange({ target: { value: newCode } });
-      
-      setTimeout(() => {
-        const newPosition = start + 1 + newIndent.length;
-        e.target.selectionStart = e.target.selectionEnd = newPosition;
-      }, 0);
-      return;
-    }
-
-    // } 입력 시 자동 들여쓰기 감소
-    if (e.key === '}') {
-      const start = e.target.selectionStart;
-      const lines = value.substring(0, start).split('\n');
-      const currentLine = lines[lines.length - 1];
-      
-      // 현재 줄이 공백만 있고 들여쓰기가 있는 경우
-      if (currentLine.match(/^\s+$/) && currentLine.length >= 4) {
-        e.preventDefault();
-        const newLine = currentLine.substring(4) + '}';
-        const beforeCurrentLine = lines.slice(0, -1).join('\n');
-        const afterCursor = value.substring(start);
-        const newCode = (beforeCurrentLine ? beforeCurrentLine + '\n' : '') + newLine + afterCursor;
-        
-        onChange({ target: { value: newCode } });
-        
-        setTimeout(() => {
-          const newPosition = start - 4 + 1;
-          e.target.selectionStart = e.target.selectionEnd = newPosition;
-        }, 0);
-      }
-    }
-  };
-
-  const lineCount = value.split('\n').length;
-  const lineNumbers = Array.from({ length: lineCount }, (_, i) => i + 1);
+  const editorRef = useRef(null);
 
   // 언어별 색상 설정
   const themeColors = {
@@ -74,9 +11,8 @@ export default function CodeEditor({ value, onChange, onReset, language, onLangu
       primary: 'rgba(102, 126, 234, 0.2)',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       bgLight: '#fafbff',
-      bgLineNumber: '#f0f2ff',
       shadow: 'rgba(102, 126, 234, 0.15)',
-      border: 'rgba(102, 126, 234, 0.1)',
+      accent: '#667eea',
       icon: 'C',
       name: 'C 언어'
     },
@@ -84,15 +20,99 @@ export default function CodeEditor({ value, onChange, onReset, language, onLangu
       primary: 'rgba(234, 102, 102, 0.2)',
       gradient: 'linear-gradient(135deg, #ea6e6e 0%, #c44569 100%)',
       bgLight: '#fffbfb',
-      bgLineNumber: '#fff0f0',
       shadow: 'rgba(234, 102, 102, 0.15)',
-      border: 'rgba(234, 102, 102, 0.1)',
+      accent: '#ea6e6e',
       icon: 'J',
       name: 'Java'
     }
   };
 
   const theme = themeColors[language];
+
+  // Monaco Editor 마운트 시 테마 설정
+  const handleEditorDidMount = (editor, monaco) => {
+    editorRef.current = editor;
+    
+    // C 언어 테마
+    monaco.editor.defineTheme('purpleTheme', {
+      base: 'vs',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '9ca3af', fontStyle: 'italic' },
+        { token: 'keyword', foreground: '667eea', fontStyle: 'bold' },
+        { token: 'string', foreground: '764ba2' },
+        { token: 'number', foreground: '667eea' },
+        { token: 'type', foreground: '764ba2' },
+        { token: 'function', foreground: '5a67d8' },
+        { token: 'variable', foreground: '1f2937' },
+        { token: 'identifier', foreground: '1f2937' },
+      ],
+      colors: {
+        'editor.background': '#fafbff',
+        'editor.foreground': '#1f2937',
+        'editor.lineHighlightBackground': '#f0f2ff',
+        'editor.selectionBackground': '#667eea30',
+        'editorCursor.foreground': '#667eea',
+        'editorLineNumber.foreground': '#9ca3af',
+        'editorLineNumber.activeForeground': '#667eea',
+        'editor.inactiveSelectionBackground': '#667eea20',
+        'editorIndentGuide.background': '#e8e8e8',
+        'editorIndentGuide.activeBackground': '#667eea50',
+      }
+    });
+
+    // Java 테마
+    monaco.editor.defineTheme('redTheme', {
+      base: 'vs',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '9ca3af', fontStyle: 'italic' },
+        { token: 'keyword', foreground: 'ea6e6e', fontStyle: 'bold' },
+        { token: 'string', foreground: 'c44569' },
+        { token: 'number', foreground: 'ea6e6e' },
+        { token: 'type', foreground: 'c44569' },
+        { token: 'function', foreground: 'd64545' },
+        { token: 'variable', foreground: '1f2937' },
+        { token: 'identifier', foreground: '1f2937' },
+      ],
+      colors: {
+        'editor.background': '#fffbfb',
+        'editor.foreground': '#1f2937',
+        'editor.lineHighlightBackground': '#fff0f0',
+        'editor.selectionBackground': '#ea6e6e30',
+        'editorCursor.foreground': '#ea6e6e',
+        'editorLineNumber.foreground': '#9ca3af',
+        'editorLineNumber.activeForeground': '#ea6e6e',
+        'editor.inactiveSelectionBackground': '#ea6e6e20',
+        'editorIndentGuide.background': '#e8e8e8',
+        'editorIndentGuide.activeBackground': '#ea6e6e50',
+      }
+    });
+
+    // 언어에 따라 테마 적용
+    monaco.editor.setTheme(language === 'c' ? 'purpleTheme' : 'redTheme');
+  };
+
+  // 에디터 값 변경 핸들러
+  const handleEditorChange = (newValue) => {
+    onChange({ target: { value: newValue || '' } });
+  };
+
+  // 언어 변경 시 테마도 변경
+  const handleLanguageChange = (e) => {
+    onLanguageChange(e);
+    if (editorRef.current) {
+      const monaco = window.monaco;
+      if (monaco) {
+        monaco.editor.setTheme(e.target.value === 'c' ? 'purpleTheme' : 'redTheme');
+      }
+    }
+  };
+
+  // Monaco 언어 매핑
+  const getMonacoLanguage = () => {
+    return language === 'c' ? 'c' : 'java';
+  };
 
   const styles = {
     container: {
@@ -163,43 +183,10 @@ export default function CodeEditor({ value, onChange, onReset, language, onLangu
       backdropFilter: 'blur(10px)',
     },
     editorWrapper: {
-      display: 'flex',
-      backgroundColor: theme.bgLight,
+      display: 'flex',       // 부모 flex에 맞춰서 늘어나도록
       border: 'none',
       height: '300px',
       overflow: 'hidden',
-    },
-    lineNumbers: {
-      backgroundColor: theme.bgLineNumber,
-      padding: '16px 12px',
-      textAlign: 'right',
-      color: '#9ca3af',
-      fontFamily: '"Pretendard", -apple-system, BlinkMacSystemFont, sans-serif',
-      fontSize: '13px',
-      userSelect: 'none',
-      borderRight: `1.5px solid ${theme.border}`,
-      height: '300px',
-      minWidth: '30px',
-      lineHeight: '20px',
-    },
-    lineNumber: {
-      lineHeight: '20px',
-      fontWeight: '500',
-    },
-    textarea: {
-      flex: 1,
-      backgroundColor: 'transparent',
-      color: '#1f2937',
-      fontFamily: '"Pretendard", -apple-system, BlinkMacSystemFont, sans-serif',
-      fontSize: '14px',
-      padding: '16px 20px',
-      resize: 'none',
-      outline: 'none',
-      lineHeight: '20px',
-      border: 'none',
-      tabSize: 4,
-      overflowY: 'auto',
-      overflowX: 'hidden',
     },
   };
 
@@ -211,7 +198,7 @@ export default function CodeEditor({ value, onChange, onReset, language, onLangu
           <span style={styles.languageIcon}>{theme.icon}</span>
           <select 
             value={language} 
-            onChange={onLanguageChange}
+            onChange={handleLanguageChange}
             style={styles.select}
           >
             <option value="c" style={{ color: '#000' }}>C 언어</option>
@@ -236,21 +223,44 @@ export default function CodeEditor({ value, onChange, onReset, language, onLangu
         </div>
       </div>
 
-      {/* 에디터 */}
+      {/* Monaco Editor */}
       <div style={styles.editorWrapper}>
-        <div style={styles.lineNumbers}>
-          {lineNumbers.map(num => (
-            <div key={num} style={styles.lineNumber}>{num}</div>
-          ))}
-        </div>
-
-        <textarea
+        <Editor
+          height="500px"
+          width="500px"
+          language={getMonacoLanguage()}
           value={value}
-          onChange={onChange}
-          onKeyDown={handleKeyDown}
-          style={styles.textarea}
-          spellCheck={false}
-          placeholder={`// ${theme.name} 코드를 입력하세요...`}
+          onChange={handleEditorChange}
+          onMount={handleEditorDidMount}
+          options={{
+            fontSize: 14,
+            fontFamily: '"SF Mono", "Consolas", "Monaco", "Pretendard", monospace',
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            lineNumbers: 'on',
+            lineNumbersMinChars: 3,
+            folding: true,
+            automaticLayout: true,
+            tabSize: 4,
+            insertSpaces: true,
+            wordWrap: 'off',
+            renderLineHighlight: 'line',
+            cursorBlinking: 'smooth',
+            cursorSmoothCaretAnimation: 'on',
+            smoothScrolling: true,
+            padding: { top: 16, bottom: 16 },
+            scrollbar: {
+              vertical: 'auto',
+              horizontal: 'auto',
+              verticalScrollbarSize: 8,
+              horizontalScrollbarSize: 8,
+            },
+            bracketPairColorization: { enabled: true },
+            autoClosingBrackets: 'always',
+            autoClosingQuotes: 'always',
+            formatOnPaste: true,
+            formatOnType: true,
+          }}
         />
       </div>
     </div>

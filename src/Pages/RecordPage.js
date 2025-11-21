@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./RecordPage.css";
 import { useNavigate } from "react-router-dom";
 import { useProblem } from "../ProblemContext";
@@ -11,7 +11,7 @@ export default function RecordPage() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { user, isLoggedIn, logout } = useUser();
+  const { user, isLoggedIn } = useUser();
 
   // 목록 로드
   useEffect(() => {

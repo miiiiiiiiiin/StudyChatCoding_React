@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./MainPage.css";
 import { useProblem } from "../ProblemContext";
+import { useUser } from "../UserContext.js";
 import { useResult } from "../ResultContext";
 import CCodeEditor from './CCodeEditor';
 import { useNavigate, useLocation } from "react-router-dom";
-import { useUser } from "../UserContext.js";
+import Editor from "@monaco-editor/react"
+
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ export default function MainPage() {
     sessionStorage.getItem("replayMode") === "true" || location.state?.replay
   );
   const { response, setResponse } = useProblem();
-  const { hint, correct, timer, level, resetAll, selectedLevel, setSelectedLevel} = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
+  const { hint, correct, timer, selectedLevel } = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
   const { user } = useUser();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -180,7 +182,9 @@ int main() {
     setLanguage(newLang);
     setCodeText(newLang === 'c' ? initialCCode : initialJavaCode);
   };
-  const handleChange = (e) => setCodeText(e.target.value);
+const handleChange = (e) => setCodeText(e.target.value);
+
+
 
   // 일반 대화/힌트 프록시 (기존 ChatService 경유)
   const sendRequest = async (userMessage) => {
@@ -265,7 +269,6 @@ int main() {
   // 힌트
   const setHint = async () => {
     if (hint.Hintnum >= 3 || isThinking) return;
-
     setThinking(true);
 
     // 남은 힌트 감소/버튼 비활성 처리
@@ -345,6 +348,7 @@ int main() {
           onLanguageChange={handleLanguageChange}
         />
 
+        
         {!replayMode && (
           <div className="SendBtn">
             <button className={`HintBtn ${active ? "active" : ""}`} onClick={setHint}>

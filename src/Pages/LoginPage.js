@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./LoginPage.css";
 import { useNavigate } from "react-router-dom";
 import { useUser } from '../UserContext.js';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function LoginPage() {
@@ -46,13 +46,11 @@ export default function LoginPage() {
 
         if (res.ok) {
           const data = await res.json();  
-
           // data.id, data.loginId, data.name 등 받을 수 있음
           login(data);   // Context에 사용자 정보 저장
           toast.success(`${data.name}님 반갑습니다!`);
           navigate("/");
         } else {
-          const error = await res.text();
           toast.error("아이디 또는 비밀번호가 일치하지 않습니다.");
 
           //alert("로그인 실패: " + error);
@@ -89,7 +87,6 @@ export default function LoginPage() {
         });
 
         if (res.ok) {
-          const message = await res.text();
           toast.success("회원가입이 완료되었습니다.");
           setIsLogin(true); // 로그인 화면으로 전환
           

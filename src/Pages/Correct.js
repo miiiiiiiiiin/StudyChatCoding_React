@@ -1,6 +1,5 @@
-import React from "react";
-import { useState, useEffect, useRef } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./MainPage.css";
 import { useProblem } from "../ProblemContext";
 import { useResult } from "../ResultContext";
@@ -10,7 +9,7 @@ import { useUser } from "../UserContext.js";
 export default function Correct() {
   const navigate = useNavigate();
   const { setResponse } = useProblem(); // 답변, 문제
-  const { hint, correct, timer, level, resetAll, selectedLevel, setSelectedLevel} = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
+  const { hint, correct, timer, resetAll, selectedLevel, setSelectedLevel} = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
   const { user } = useUser();
 
   const userId = user?.id;

@@ -27,9 +27,9 @@ function AppWrapper() {
 
 function App() {
   const navigate = useNavigate();
-  const { message, setMessage, setResponse } = useProblem();
+  const { setResponse } = useProblem();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { hint, correct, timer, level, resetAll, selectedLevel, setSelectedLevel } = useResult();
+  const { resetAll, selectedLevel, setSelectedLevel } = useResult();
   const { user, isLoggedIn, logout } = useUser();
 
   const userId = user?.id;
@@ -97,30 +97,6 @@ function App() {
     }
   };
 
-  // 일반 대화 전송
-  const sendRequest = async () => {
-    if (message.trim() === "") return;
-    resetAll();
-    try {
-      const res = await fetch("http://localhost:8080/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, message }),
-      });
-
-      if (!res.ok) {
-        toast.error("대화 전송 실패");
-        return;
-      }
-
-      const data = await res.json();
-      setResponse(data);
-      toast.success("대화 전송 완료!");
-    } catch (err) {
-      console.error("API 호출 실패:", err);
-      toast.error("대화 전송 중 오류 발생");
-    }
-  };
 
   // 로그아웃 이벤트
   const LogoutEvent = () => {
