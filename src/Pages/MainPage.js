@@ -9,6 +9,9 @@ import Editor from "@monaco-editor/react"
 
 
 export default function MainPage() {
+
+  const API_URL = "https://codetalk-backendhost.onrender.com";
+
   const navigate = useNavigate();
   //다시보기일 경우 정답페이지가 아닌 메인 페이지로 가기 위한 location 변수
   const location = useLocation();
@@ -191,7 +194,7 @@ const handleChange = (e) => setCodeText(e.target.value);
     setIsLoading(true);
     try {
       const sid = sessionStorage.getItem("sessionId");
-      const res = await fetch("http://localhost:8080/api/chat", {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, message: userMessage, sessionId: sid }),
@@ -213,7 +216,7 @@ const handleChange = (e) => setCodeText(e.target.value);
     try {
       // 1) 채점 (userId, code, language를 body로 한 번에 전송)
       const sid = sessionStorage.getItem("sessionId");   // 문제 받을 때 저장해둔 세션 ID
-      const res = await fetch("http://localhost:8080/api/answers/evaluate", {
+      const res = await fetch(`${API_URL}/api/answers/evaluate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -233,11 +236,11 @@ const handleChange = (e) => setCodeText(e.target.value);
       
       if (sid) {
         // 시도 1 증가
-        try { await fetch(`http://localhost:8080/api/sessions/${sid}/try`, { method: "POST" }); } catch (_) {}
+        try { await fetch(`${API_URL}/api/sessions/${sid}/try`, { method: "POST" }); } catch (_) {}
 
         // 정답이면 solved 표시
         if (text.includes("정답입니다")) {
-          try { await fetch(`http://localhost:8080/api/sessions/${sid}/solve`, { method: "POST" }); } catch (_) {}
+          try { await fetch(`${API_URL}/api/sessions/${sid}/solve`, { method: "POST" }); } catch (_) {}
         }
       }
     } catch (err) {
@@ -284,7 +287,7 @@ const handleChange = (e) => setCodeText(e.target.value);
     // 세션 힌트 카운트 증가 (있으면)
     const sid = sessionStorage.getItem("sessionId");
     if (sid) {
-      try { await fetch(`http://localhost:8080/api/sessions/${sid}/hint`, { method: "POST" }); } catch (_) {}
+      try { await fetch(`${API_URL}/api/sessions/${sid}/hint`, { method: "POST" }); } catch (_) {}
     }
 
     // 실제 힌트 생성은 기존 ChatService에 요청

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function LoginPage() {
+  const API_URL = "https://codetalk-backendhost.onrender.com";
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true); // true: 로그인, false: 회원가입
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +34,7 @@ export default function LoginPage() {
       // 로그인 로직
       setIsLoading(true);
       try {
-        const res = await fetch("http://localhost:8080/api/users/login", {
+        const res = await fetch(`${API_URL}/api/users/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -73,7 +74,7 @@ export default function LoginPage() {
 
       setIsLoading(true);
       try {
-        const res = await fetch("http://localhost:8080/api/users/register", {
+        const res = await fetch(`${API_URL}/api/users/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

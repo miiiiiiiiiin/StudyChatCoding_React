@@ -7,6 +7,7 @@ import { useUser } from "../UserContext.js";
 
 ////////정답 페이지
 export default function Correct() {
+  const API_URL = "https://codetalk-backendhost.onrender.com";
   const navigate = useNavigate();
   const { setResponse } = useProblem(); // 답변, 문제
   const { hint, correct, timer, resetAll, selectedLevel, setSelectedLevel} = useResult(); // 힌트 사용한 횟수,정답 보낸 횟수 ,소요시간 세서 정답 페이지로 보내는 전역변수
@@ -18,7 +19,7 @@ export default function Correct() {
   const fetchProblemByLevel = async (levelToLoad) => {
     try {
       const res = await fetch(
-      `http://localhost:8080/api/problems/random-by-level?level=${levelToLoad}&userId=${userId}`
+      `${API_URL}/api/problems/random-by-level?level=${levelToLoad}&userId=${userId}`
       );
 
       if (res.status === 204) {

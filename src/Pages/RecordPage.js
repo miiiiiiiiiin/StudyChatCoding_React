@@ -5,6 +5,7 @@ import { useProblem } from "../ProblemContext";
 import { useUser } from '../UserContext.js';
 
 export default function RecordPage() {
+  const API_URL = "https://codetalk-backendhost.onrender.com";
   const navigate = useNavigate();
   const { setResponse } = useProblem();
 
@@ -25,7 +26,7 @@ export default function RecordPage() {
     const loadRecords = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:8080/api/sessions?userId=${user.id}`);
+        const res = await fetch(`${API_URL}/api/sessions?userId=${user.id}`);
         if (!res.ok) {
           setRecords([]);
           return;
@@ -52,7 +53,7 @@ export default function RecordPage() {
       sessionStorage.setItem("replayMode", "true");
 
       // 1) 대화 기록 먼저 시도
-      const tRes = await fetch(`http://localhost:8080/api/sessions/${sessionId}/messages`);
+      const tRes = await fetch(`${API_URL}/api/sessions/${sessionId}/messages`);
       if (tRes.ok && tRes.status !== 204) {
         const messagesText = await tRes.text();
         sessionStorage.setItem("replayMessages", messagesText);
@@ -62,7 +63,7 @@ export default function RecordPage() {
       }
 
       // 2) 문제 텍스트는 항상 요청해서 Context에 심어주기
-      const pRes = await fetch(`http://localhost:8080/api/problems/by-session?sessionId=${sessionId}`);
+      const pRes = await fetch(`${API_URL}/api/problems/by-session?sessionId=${sessionId}`);
       if (pRes.ok) {
         const text = await pRes.text();
         sessionStorage.setItem("sessionId", sessionId);

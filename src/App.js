@@ -27,6 +27,7 @@ function AppWrapper() {
 }
 
 function App() {
+  const API_URL = "https://codetalk-backendhost.onrender.com";
   const navigate = useNavigate();
   const { setResponse } = useProblem();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -41,7 +42,7 @@ function App() {
 
     const loadUserLevel = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/users/${userId}/level`);
+        const res = await fetch(`${API_URL}/api/users/${userId}/level`);
         if (!res.ok) {
           console.error("레벨 조회 실패:", res.status);
           return;
@@ -63,7 +64,7 @@ function App() {
   const fetchProblemByLevel = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8080/api/problems/random-by-level?level=${selectedLevel}&userId=${userId}`
+        `${API_URL}/api/problems/random-by-level?level=${selectedLevel}&userId=${userId}`
       );
 
       if (res.status === 204) {
